@@ -1,5 +1,6 @@
 import string
-import os
+import os  # to get file name on in save dialog function
+import pyperclip  # to copy output text to clipboard
 from tkinter import *
 from tkinter import filedialog
 
@@ -192,7 +193,7 @@ window.resizable(0, 0)
 photo = PhotoImage(file="BGTK.png")
 background_label = Label(window, image=photo)
 background_label.place(x=0, y=0, relwidth=1, relheight=1)
-Label(window, text="Write the text you want to cipher/decipher:", bg="LightSteelBlue4", fg="white",
+Label(window, text="Enter the text you want to encrypt/decrypt:", bg="LightSteelBlue4", fg="white",
       font="none 12 bold").grid(
     row=1, column=0, sticky=W)
 
@@ -210,7 +211,7 @@ en_btn.grid(row=3, column=1, sticky=W)
 de_btn = Button(window, width=20, height=2, bg="DeepSkyBlue3", command=save_dialog_de, text="Decrypt To File")
 de_btn.grid(row=4, column=1, sticky=W)
 
-Label(window, text="How many numbers forward or backwards (minus) do you want to shift it:", bg="LightSteelBlue4",
+Label(window, text="Enter encryption/decryption key:", bg="LightSteelBlue4",
       fg="white",
       font="none 12 bold").grid(row=3, column=0, sticky=W)
 
@@ -232,12 +233,17 @@ btn3.grid(row=7, column=0, sticky=W)
 output = Label(window, text="", width=85, height=4, bg="mint cream")
 output.grid(row=8, column=0, sticky=W)
 
+"""copy output to clipboard button"""
+copy_btn = Button(window, width=11, height=2, bg="deep sky blue", command=lambda: pyperclip.copy(output.cget('text')),
+                  text="Copy Output")
+copy_btn.grid(row=9, column=0, sticky=W)
+
 """save output to file button"""
-s_btn = Button(window, width=11, height=2, bg="deep sky blue", command=save_dialog, text="Save To File")
-s_btn.grid(row=9, column=0, sticky=W)
+s_btn = Button(window, width=11, height=2, bg="DeepSkyBlue2", command=save_dialog, text="Save To File")
+s_btn.grid(row=10, column=0, sticky=W)
 
 """exit button"""
 btn = Button(window, width=11, height=2, bg="blue", command=window.destroy, text="Exit")
-btn.grid(row=10, column=0, sticky=W)
+btn.grid(row=11, column=0, sticky=W)
 
 window.mainloop()
