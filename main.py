@@ -27,7 +27,7 @@ def caesarize(text, shift, alphabets):
 it checks if a valid input exists in the "shift" field and outputs the result or an error message."""
 
 
-def t_Insert():
+def t_insert():
     # print(str(shift.get("1.0", "end")))
     try:
         int(shift.get("1.0", "end"))
@@ -51,7 +51,7 @@ def t_Insert():
 it checks if a valid input exists in the "shift" field and outputs the result or an error message."""
 
 
-def t_Insert2():
+def t_insert2():
     # print(str(shift.get("1.0", "end")))
     try:
         int(shift.get("1.0", "end"))
@@ -79,6 +79,7 @@ def import_dialog():
     # if you click 'cancel' in the dialog 'file1' is simply an empty string.
     if file1 == "":
         textbox.delete('1.0', END)
+        output.config(text="")
         return
 
     # if it isn't a text file
@@ -220,13 +221,13 @@ shift = Text(window, width=7, height=1, bg="LightSkyBlue1", font="none 16")
 shift.grid(row=4, column=0, sticky=W)
 
 """calculation button"""
-btn = Button(window, width=11, height=2, bg="SteelBlue1", command=t_Insert, text="Encrypt")
+btn = Button(window, width=11, height=2, bg="SteelBlue1", command=t_insert, text="Encrypt")
 btn.grid(row=5, column=0, sticky=W)
 
-btn2 = Button(window, width=11, height=2, bg="SteelBlue2", command=t_Insert2, text="Decrypt")
+btn2 = Button(window, width=11, height=2, bg="SteelBlue2", command=t_insert2, text="Decrypt")
 btn2.grid(row=6, column=0, sticky=W)
 
-btn3 = Button(window, width=11, height=2, bg="SteelBlue3", command=t_Insert2, text="Try Force")
+btn3 = Button(window, width=11, height=2, bg="SteelBlue3", command=t_insert2, text="Try Force")
 btn3.grid(row=7, column=0, sticky=W)
 
 """the result label"""
