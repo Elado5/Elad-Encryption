@@ -74,9 +74,17 @@ def t_Insert2():
 
 def import_dialog():
     file1 = filedialog.askopenfilename()
-    if not file1.endswith('.txt'):
+
+    # if you click 'cancel' in the dialog 'file1' is simply an empty string.
+    if file1 == "":
+        textbox.delete('1.0', END)
+        return
+
+    # if it isn't a text file
+    elif not file1.endswith('.txt'):
         textbox.delete('1.0', END)
         textbox.insert("1.0", "Wrong file type, please use text files.")
+
     else:
         file2 = open(file1, "r")
         if file2.readable():
