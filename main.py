@@ -3,6 +3,7 @@ import os  # to get file name on in save dialog function
 import pyperclip  # to copy output text to clipboard
 from tkinter import *
 from tkinter import filedialog
+from cryptography.fernet import Fernet
 
 """function to turn text into caesar cipher"""
 """it takes the text input, the 'shift' input and the range of characters/etc. it needs to turn into caesar cipher"""
@@ -23,6 +24,17 @@ def caesarize(text, shift, alphabets):
     return str(text.translate(table))
 
 
+def encrypt_handler(text, key):
+    crypter = Fernet(key)
+    pw = crypter.encrypt(bytes(text))
+    return str(pw, 'utf8')
+
+
+def decrypt_handler(text, key):
+    crypter = Fernet(key)
+    decrypt_string = crypter.decrypt(bytes(text))
+
+
 """function to show the result of the encryption in the output label.
 it checks if a valid input exists in the "shift" field and outputs the result or an error message."""
 
@@ -40,6 +52,25 @@ def t_insert():
             text=(caesarize(textbox.get("1.0", "end"), int(shift.get("1.0", "end")),
                             [string.ascii_letters, string.digits])))
 
+        return
+    else:
+        output.config(
+            text="error - wrong shift input")
+        print(str(shift.get("1.0", "end")).rstrip("\n"))
+
+
+def t_insert_new():
+    # print(str(shift.get("1.0", "end")))
+    try:
+        int(shift.get("1.0", "end"))
+        is_dig = True
+    except:
+        is_dig = False
+
+    if is_dig:
+        output.config(
+            text=(encrypt_handler(textbox.get("1.0", "end"), bytes(shift.get("1.0", "end"))
+                                  )))
         return
     else:
         output.config(
@@ -221,7 +252,7 @@ shift = Text(window, width=7, height=1, bg="LightSkyBlue1", font="none 16")
 shift.grid(row=4, column=0, sticky=W)
 
 """calculation button"""
-btn = Button(window, width=11, height=2, bg="SteelBlue1", command=t_insert, text="Encrypt")
+btn = Button(window, width=11, height=2, bg="SteelBlue1", command=t_insert_new, text="Encrypt")
 btn.grid(row=5, column=0, sticky=W)
 
 btn2 = Button(window, width=11, height=2, bg="SteelBlue2", command=t_insert2, text="Decrypt")
