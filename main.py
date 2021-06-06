@@ -25,14 +25,14 @@ def caesarize(text, shift, alphabets):
 
 
 def encrypt_handler(text, key):
-    crypter = Fernet(key)
-    pw = crypter.encrypt(bytes(text))
-    return str(pw, 'utf8')
+
+    enc = str.encode(text)
+    return str()
 
 
 def decrypt_handler(text, key):
-    crypter = Fernet(key)
-    decrypt_string = crypter.decrypt(bytes(text))
+    crypter = Fernet(bytes(key))
+    decrypt_string = crypter.decrypt(bytes(text, 'utf8'))
 
 
 """function to show the result of the encryption in the output label.
@@ -42,40 +42,40 @@ it checks if a valid input exists in the "shift" field and outputs the result or
 def t_insert():
     # print(str(shift.get("1.0", "end")))
     try:
-        int(shift.get("1.0", "end"))
+        int(key.get("1.0", "end"))
         is_dig = True
     except:
         is_dig = False
 
     if is_dig:
         output.config(
-            text=(caesarize(textbox.get("1.0", "end"), int(shift.get("1.0", "end")),
+            text=(caesarize(textbox.get("1.0", "end"), int(key.get("1.0", "end")),
                             [string.ascii_letters, string.digits])))
 
         return
     else:
         output.config(
-            text="error - wrong shift input")
-        print(str(shift.get("1.0", "end")).rstrip("\n"))
+            text="error - wrong key input")
+        print(str(key.get("1.0", "end")).rstrip("\n"))
 
 
 def t_insert_new():
     # print(str(shift.get("1.0", "end")))
     try:
-        int(shift.get("1.0", "end"))
+        int(key.get("1.0", "end"))
         is_dig = True
     except:
         is_dig = False
 
     if is_dig:
         output.config(
-            text=(encrypt_handler(textbox.get("1.0", "end"), bytes(shift.get("1.0", "end"))
+            text=(encrypt_handler(textbox.get("1.0", "end"), bytes(key.get(("1.0", "end")), 'utf8')
                                   )))
         return
     else:
         output.config(
-            text="error - wrong shift input")
-        print(str(shift.get("1.0", "end")).rstrip("\n"))
+            text="error - wrong key input")
+        print(str(key.get("1.0", "end")).rstrip("\n"))
 
 
 """function to show the result of the decryption in the output label.
@@ -85,20 +85,20 @@ it checks if a valid input exists in the "shift" field and outputs the result or
 def t_insert2():
     # print(str(shift.get("1.0", "end")))
     try:
-        int(shift.get("1.0", "end"))
+        int(key.get("1.0", "end"))
         is_dig = True
     except:
         is_dig = False
 
     if is_dig:
         output.config(
-            text=(caesarize(textbox.get("1.0", "end"), int(shift.get("1.0", "end")) * -1,
+            text=(caesarize(textbox.get("1.0", "end"), int(key.get("1.0", "end")) * -1,
                             [string.ascii_letters, string.digits])))
         return
     else:
         output.config(
             text="error - wrong shift input")
-        print(str(shift.get("1.0", "end")).rstrip("\n"))
+        print(str(key.get("1.0", "end")).rstrip("\n"))
 
 
 """Import file dialog function"""
@@ -153,13 +153,13 @@ def save_dialog_en():
         return
 
     try:
-        int(shift.get("1.0", "end"))
+        int(key.get("1.0", "end"))
         is_dig = True
     except:
         is_dig = False
 
     if is_dig:
-        text_var = (caesarize(textbox.get("1.0", "end"), int(shift.get("1.0", "end")),
+        text_var = (caesarize(textbox.get("1.0", "end"), int(key.get("1.0", "end")),
                               [string.ascii_letters, string.digits]))
 
         s_file = filedialog.asksaveasfile(mode='w', defaultextension=".txt")
@@ -187,13 +187,13 @@ def save_dialog_de():
         return
 
     try:
-        int(shift.get("1.0", "end"))
+        int(key.get("1.0", "end"))
         is_dig = True
     except:
         is_dig = False
 
     if is_dig:
-        text_var = (caesarize(textbox.get("1.0", "end"), int(shift.get("1.0", "end")) * -1,
+        text_var = (caesarize(textbox.get("1.0", "end"), int(key.get("1.0", "end")) * -1,
                               [string.ascii_letters, string.digits]))
 
         s_file = filedialog.asksaveasfile(mode='w', defaultextension=".txt")
@@ -247,12 +247,20 @@ Label(window, text="Enter encryption/decryption key:", bg="LightSteelBlue4",
       fg="white",
       font="none 12 bold").grid(row=3, column=0, sticky=W)
 
-"""text widget for shift input"""
-shift = Text(window, width=7, height=1, bg="LightSkyBlue1", font="none 16")
-shift.grid(row=4, column=0, sticky=W)
+"""text widget for key input"""
+key = Text(window, width=40, height=1, bg="LightSkyBlue1", font="none 11")
+key.grid(row=4, column=0, sticky=W)
+
+btn = Button(window, width=21, height=2, bg="SteelBlue1", command=lambda: pyperclip.copy(key.get("1.0", "end")), text="Copy "
+                                                                                                                 "Key "
+                                                                                                                 "To"
+                                                                                                                 " Cli"
+                                                                                                                 "pbo"
+                                                                                                                 "ard")
+btn.grid(row=5, column=1, sticky=W)
 
 """calculation button"""
-btn = Button(window, width=11, height=2, bg="SteelBlue1", command=t_insert_new, text="Encrypt")
+btn = Button(window, width=11, height=2, bg="SteelBlue1", command=t_insert, text="Encrypt")
 btn.grid(row=5, column=0, sticky=W)
 
 btn2 = Button(window, width=11, height=2, bg="SteelBlue2", command=t_insert2, text="Decrypt")
