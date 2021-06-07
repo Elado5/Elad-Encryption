@@ -1,45 +1,69 @@
-import string
 import os  # to get file name on in save dialog function
 import pyperclip  # to copy output text to clipboard
 from tkinter import *
 from tkinter import filedialog
-from cryptography.fernet import Fernet
 
-"""function to turn text into caesar cipher"""
-"""it takes the text input, the 'shift' input and the range of characters/etc. it needs to turn into caesar cipher"""
-
-
-def caesarize(text, shift, alphabets):
-    def shift_text(alphabets):
-        return alphabets[shift:] + alphabets[:shift]
-
-    shifted_alphabets = tuple(map(shift_text, alphabets))
-    # print(shifted_alphabets)
-    final_alphabets = ''.join(alphabets)
-    final_shifted_alphabets = ''.join(shifted_alphabets)
-    table = str.maketrans(final_alphabets, final_shifted_alphabets)
-    text2 = str(text.translate(table))
-    text2 = list(text2)
-
-    return str(text.translate(table))
+"""Encryption function - takes a text (string) and a key, turns the text in a list, creates a new list and an int
+ counter, loops for each letter in the string (turned list), raise the counter by 1 and add that letter to the new list,
+ with the addition of the key multiplied by the counter+key if the modulo of the key by the current counter returns 0.
+ Then we turn return the new list after we turn it into a string and reverse it to make it more ambiguous."""
 
 
-def encrypt_handler(text, key):
+def enc(text, key):
+    e = list(text)
+    lst = []
+    counter = 0
+    for x in e:
+        counter += 1
+        lst += x
+        if key % counter == 0:
+            lst += str(key * (counter + key))
 
-    enc = str.encode(text)
-    return str()
+    return ''.join(lst)[::-1]
 
 
-def decrypt_handler(text, key):
-    crypter = Fernet(bytes(key))
-    decrypt_string = crypter.decrypt(bytes(text, 'utf8'))
+"""Reverses the encryption process"""
+
+
+def dec(text, key):
+    e = list(text[::-1])
+    el = text[::-1]
+    counter = 0
+
+    for x in e:
+        counter += 1
+        if key % counter == 0:
+            cipher_addition = str(key * (counter + key))
+            el = el.replace(cipher_addition, "", 1)
+    return el
+
+
+"""forced decryption - takes a text hint (so it knows what to look for in general) and then a key search range.
+   A 'for' loop starts and runs the decryption algorithm for *search range* times, if a result that contains the hint
+   text exists - it returns the result and the key that worked and then the loop ends.
+   If it doesn't find a string that contains the hint text, it returns 'no plausible result found'"""
+
+
+def force_dec(text, hint, search_range):
+    for num in range(search_range):
+        e = list(text[::-1])
+        el = text[::-1]
+        counter = 0
+        for x in e:
+            counter += 1
+            if num % counter == 0:
+                cipher_addition = str(num * (counter + num))
+                el = el.replace(cipher_addition, "", 1)
+        if hint in el:
+            return "Decrypted text: " + el + "\nkey: " + str(num)
+    return "No plausible result found"
 
 
 """function to show the result of the encryption in the output label.
 it checks if a valid input exists in the "shift" field and outputs the result or an error message."""
 
 
-def t_insert():
+def encrypt():
     # print(str(shift.get("1.0", "end")))
     try:
         int(key.get("1.0", "end"))
@@ -49,40 +73,21 @@ def t_insert():
 
     if is_dig:
         output.config(
-            text=(caesarize(textbox.get("1.0", "end"), int(key.get("1.0", "end")),
-                            [string.ascii_letters, string.digits])))
+            text=(enc(textbox.get("1.0", "end"), int(key.get("1.0", "end"))
+                      ).rstrip("\n")))
 
         return
     else:
         output.config(
             text="error - wrong key input")
-        print(str(key.get("1.0", "end")).rstrip("\n"))
-
-
-def t_insert_new():
-    # print(str(shift.get("1.0", "end")))
-    try:
-        int(key.get("1.0", "end"))
-        is_dig = True
-    except:
-        is_dig = False
-
-    if is_dig:
-        output.config(
-            text=(encrypt_handler(textbox.get("1.0", "end"), bytes(key.get(("1.0", "end")), 'utf8')
-                                  )))
-        return
-    else:
-        output.config(
-            text="error - wrong key input")
-        print(str(key.get("1.0", "end")).rstrip("\n"))
+        print(str(key.get("1.0", "end")))
 
 
 """function to show the result of the decryption in the output label.
 it checks if a valid input exists in the "shift" field and outputs the result or an error message."""
 
 
-def t_insert2():
+def decrypt():
     # print(str(shift.get("1.0", "end")))
     try:
         int(key.get("1.0", "end"))
@@ -92,13 +97,31 @@ def t_insert2():
 
     if is_dig:
         output.config(
-            text=(caesarize(textbox.get("1.0", "end"), int(key.get("1.0", "end")) * -1,
-                            [string.ascii_letters, string.digits])))
+            text=(dec(textbox.get("1.0", "end"), int(key.get("1.0", "end"))
+                      )))
         return
     else:
         output.config(
             text="error - wrong shift input")
         print(str(key.get("1.0", "end")).rstrip("\n"))
+
+
+def force_decrypt():
+    try:
+        int(search_range.get("1.0", "end"))
+        is_dig = True
+    except:
+        is_dig = False
+
+    if is_dig:
+        output.config(
+            text=(force_dec(textbox.get("1.0", "end"), str(hint.get("1.0", "end")).rstrip("\n"), int(search_range.get
+                                                                                                     ("1.0", "end")))))
+        print(str(hint.get("1.0", "end")))
+        return
+    else:
+        output.config(
+            text="error - wrong search range input")
 
 
 """Import file dialog function"""
@@ -159,8 +182,8 @@ def save_dialog_en():
         is_dig = False
 
     if is_dig:
-        text_var = (caesarize(textbox.get("1.0", "end"), int(key.get("1.0", "end")),
-                              [string.ascii_letters, string.digits]))
+        text_var = (enc(textbox.get("1.0", "end"), int(key.get("1.0", "end")),
+                        ))
 
         s_file = filedialog.asksaveasfile(mode='w', defaultextension=".txt")
         if s_file is None:
@@ -180,6 +203,48 @@ def save_dialog_en():
 """Output decrypted result to file - dialog function"""
 
 
+def save_dialog_force_de():
+    if len(textbox.get("1.0", "end-1c")) == 0:
+        output.config(
+            text="error - no text was given")
+        return
+
+    if len(str(hint.get("1.0", "end")).replace("\n", "", 1)) == 0:
+        output.config(
+            text="error - no hint was given")
+        return
+
+    try:
+        int(search_range.get("1.0", "end"))
+        is_dig = True
+    except:
+        is_dig = False
+
+    if is_dig:
+        text_var = (force_dec(textbox.get("1.0", "end"), str(hint.get("1.0", "end")), int(search_range.get
+                                                                                          ("1.0", "end"))))
+
+        if text_var == "No plausible result found":
+            output.config(
+                text=text_var)
+            return
+
+        s_file = filedialog.asksaveasfile(mode='w', defaultextension=".txt")
+        if s_file is None:
+            return
+        s_file.write(text_var)
+
+        # filtering the file name from file path
+        only_file_name = os.path.basename(s_file.name)
+
+        output.config(
+            text=("File saved successfully - file name: " + only_file_name))
+
+    else:
+        output.config(
+            text="error - wrong search range input")
+
+
 def save_dialog_de():
     if len(textbox.get("1.0", "end-1c")) == 0:
         output.config(
@@ -193,8 +258,8 @@ def save_dialog_de():
         is_dig = False
 
     if is_dig:
-        text_var = (caesarize(textbox.get("1.0", "end"), int(key.get("1.0", "end")) * -1,
-                              [string.ascii_letters, string.digits]))
+        text_var = (dec(textbox.get("1.0", "end"), int(key.get("1.0", "end"))
+                        ))
 
         s_file = filedialog.asksaveasfile(mode='w', defaultextension=".txt")
         if s_file is None:
@@ -212,14 +277,10 @@ def save_dialog_de():
             text="error - wrong shift input")
 
 
-"""just a test:"""
-# text = "Hello World, 123, 890. @#$ Elad Or zZ!"
-# print(caesarize(text, 1, [string.ascii_letters, string.digits]))
-
 """creating the tkinter window"""
 window = Tk()
 window.title("Elad - Encryption Project")
-window.wm_geometry("780x550")  # app size
+window.wm_geometry("800x600")  # app size
 window.resizable(0, 0)
 
 photo = PhotoImage(file="BGTK.png")
@@ -237,11 +298,17 @@ textbox.grid(row=2, column=0, sticky=W)
 f_btn = Button(window, width=11, height=2, bg="turquoise2", command=import_dialog, text="Import file")
 f_btn.grid(row=2, column=1, sticky=W)
 
+"""encrypt to file button"""
 en_btn = Button(window, width=20, height=2, bg="DeepSkyBlue2", command=save_dialog_en, text="Encrypt To File")
 en_btn.grid(row=3, column=1, sticky=W)
 
+"""decrypt to file button"""
 de_btn = Button(window, width=20, height=2, bg="DeepSkyBlue3", command=save_dialog_de, text="Decrypt To File")
 de_btn.grid(row=4, column=1, sticky=W)
+
+"""force decrypt to file button"""
+de_btn = Button(window, width=20, height=2, bg="SteelBlue3", command=save_dialog_force_de, text="Force Decrypt To File")
+de_btn.grid(row=5, column=1, sticky=W)
 
 Label(window, text="Enter encryption/decryption key:", bg="LightSteelBlue4",
       fg="white",
@@ -251,39 +318,66 @@ Label(window, text="Enter encryption/decryption key:", bg="LightSteelBlue4",
 key = Text(window, width=40, height=1, bg="LightSkyBlue1", font="none 11")
 key.grid(row=4, column=0, sticky=W)
 
-btn = Button(window, width=21, height=2, bg="SteelBlue1", command=lambda: pyperclip.copy(key.get("1.0", "end")), text="Copy "
-                                                                                                                 "Key "
-                                                                                                                 "To"
-                                                                                                                 " Cli"
-                                                                                                                 "pbo"
-                                                                                                                 "ard")
-btn.grid(row=5, column=1, sticky=W)
+"""copy key to clipboard button"""
+copy_btn = Button(window, width=21, height=2, bg="SteelBlue1",
+                  command=lambda: pyperclip.copy(key.get("1.0", "end").replace("\n", "", 1)),
+                  text="Copy "
+                       "Key "
+                       "To"
+                       " Cli"
+                       "pbo"
+                       "ard")
+copy_btn.grid(row=6, column=1, sticky=W)
 
 """calculation button"""
-btn = Button(window, width=11, height=2, bg="SteelBlue1", command=t_insert, text="Encrypt")
+btn = Button(window, width=11, height=2, bg="SteelBlue1", command=encrypt, text="Encrypt")
 btn.grid(row=5, column=0, sticky=W)
 
-btn2 = Button(window, width=11, height=2, bg="SteelBlue2", command=t_insert2, text="Decrypt")
+btn2 = Button(window, width=11, height=2, bg="SteelBlue2", command=decrypt, text="Decrypt")
 btn2.grid(row=6, column=0, sticky=W)
 
-btn3 = Button(window, width=11, height=2, bg="SteelBlue3", command=t_insert2, text="Try Force")
-btn3.grid(row=7, column=0, sticky=W)
+"""hint explanation"""
+Label(window, text="Enter a text hint for the forced decryption to look for (i.e. '@gmail.com')", bg="LightSteelBlue4",
+      fg="white",
+      font="none 10 bold").grid(
+    row=7, column=0, sticky=W)
+
+"""text widget for text hint input"""
+hint = Text(window, width=30, height=1, bg="LightSkyBlue1", font="none 11")
+hint.grid(row=8, column=0, sticky=W)
+
+"""search range explanation"""
+Label(window, text="Enter a the range of keys you want the forced decryption to look for (for example: 5000 is "
+                   "0-4999)\n "
+                   "keep in mind a key too high can affect your pc:", bg="LightSteelBlue4", fg="white",
+      font="none 10 bold").grid(
+    row=9, column=0, sticky=W)
+
+"""text widget for text search range input"""
+
+search_range = Text(window, width=30, height=1, bg="LightSkyBlue1", font="none 11")
+search_range.grid(row=10, column=0, sticky=W)
+
+"""forced decryption button"""
+force_btn = Button(window, width=11, height=2, bg="SteelBlue3", command=force_decrypt, text="Try Force")
+force_btn.grid(row=11, column=0, sticky=W)
 
 """the result label"""
 output = Label(window, text="", width=85, height=4, bg="mint cream")
-output.grid(row=8, column=0, sticky=W)
+output.grid(row=12, column=0, sticky=W)
 
 """copy output to clipboard button"""
-copy_btn = Button(window, width=11, height=2, bg="deep sky blue", command=lambda: pyperclip.copy(output.cget('text')),
+copy_btn = Button(window, width=11, height=2, bg="deep sky blue", command=lambda: pyperclip.copy(output.cget('text')
+                                                                                                 .replace("\n", "", 1)),
                   text="Copy Output")
-copy_btn.grid(row=9, column=0, sticky=W)
+copy_btn.grid(row=13, column=0, sticky=W)
 
 """save output to file button"""
 s_btn = Button(window, width=11, height=2, bg="DeepSkyBlue2", command=save_dialog, text="Save To File")
-s_btn.grid(row=10, column=0, sticky=W)
+s_btn.grid(row=14, column=0, sticky=W)
 
 """exit button"""
 btn = Button(window, width=11, height=2, bg="blue", command=window.destroy, text="Exit")
-btn.grid(row=11, column=0, sticky=W)
+btn.grid(row=15, column=0, sticky=W)
 
 window.mainloop()
