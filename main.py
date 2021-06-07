@@ -18,16 +18,18 @@ def enc(text, key):
         lst += x
         if key % counter == 0:
             lst += str(key * (counter + key))
-
-    return ''.join(lst)[::-1]
+    res = ''.join(lst)[::-1]
+    res = res.replace("\n", "r6r5r6r5###2345)(05gd%^&bM-=4")
+    return res
 
 
 """Reverses the encryption process"""
 
 
 def dec(text, key):
-    e = list(text[::-1])
-    el = text[::-1]
+    el = str(text).replace("r6r5r6r5###2345)(05gd%^&bM-=4", "\n")
+    el = el[::-1]
+    e = list(el)
     counter = 0
 
     for x in e:
@@ -46,8 +48,10 @@ def dec(text, key):
 
 def force_dec(text, hint, search_range):
     for num in range(search_range):
-        e = list(text[::-1])
-        el = text[::-1]
+        el = str(text).replace("r6r5r6r5###2345)(05gd%^&bM-=4", "\n")
+        el = el[::-1]
+        e = list(el)
+
         counter = 0
         for x in e:
             counter += 1
@@ -56,6 +60,7 @@ def force_dec(text, hint, search_range):
                 el = el.replace(cipher_addition, "", 1)
         if hint in el:
             return "Decrypted text: " + el + "\nkey: " + str(num)
+
     return "No plausible result found"
 
 
@@ -117,7 +122,7 @@ def force_decrypt():
         output.config(
             text=(force_dec(textbox.get("1.0", "end"), str(hint.get("1.0", "end")).rstrip("\n"), int(search_range.get
                                                                                                      ("1.0", "end")))))
-        print(str(hint.get("1.0", "end")))
+        #print(str(hint.get("1.0", "end")))
         return
     else:
         output.config(
@@ -215,14 +220,14 @@ def save_dialog_force_de():
         return
 
     try:
-        int(search_range.get("1.0", "end"))
+        int(search_range.get("1.0", "end").replace("\n", "", 1))
         is_dig = True
     except:
         is_dig = False
 
     if is_dig:
-        text_var = (force_dec(textbox.get("1.0", "end"), str(hint.get("1.0", "end")), int(search_range.get
-                                                                                          ("1.0", "end"))))
+        text_var = (force_dec(textbox.get("1.0", "end"), str(hint.get("1.0", "end")).rstrip("\n"), int(search_range.get
+                                                                                                   ("1.0", "end"))))
 
         if text_var == "No plausible result found":
             output.config(
@@ -280,7 +285,7 @@ def save_dialog_de():
 """creating the tkinter window"""
 window = Tk()
 window.title("Elad - Encryption Project")
-window.wm_geometry("800x600")  # app size
+window.wm_geometry("900x700")  # app size
 window.resizable(0, 0)
 
 photo = PhotoImage(file="BGTK.png")
@@ -348,9 +353,10 @@ hint.grid(row=8, column=0, sticky=W)
 
 """search range explanation"""
 Label(window, text="Enter a the range of keys you want the forced decryption to look for (for example: 5000 is "
-                   "0-4999)\n "
-                   "keep in mind a key too high can affect your pc:", bg="LightSteelBlue4", fg="white",
-      font="none 10 bold").grid(
+                   "0-4999)\n"
+                   "If the key result is 0 it means it was semi-decrypted.\n"
+                   "Keep in mind a key too high can affect your pc:", bg="LightSteelBlue4", fg="white",
+      font="none 9 bold").grid(
     row=9, column=0, sticky=W)
 
 """text widget for text search range input"""
@@ -363,21 +369,27 @@ force_btn = Button(window, width=11, height=2, bg="SteelBlue3", command=force_de
 force_btn.grid(row=11, column=0, sticky=W)
 
 """the result label"""
-output = Label(window, text="", width=85, height=4, bg="mint cream")
+output = Label(window, text="", width=100, height=8, bg="mint cream")
 output.grid(row=12, column=0, sticky=W)
+
+"""search range explanation"""
+Label(window, text="If the output is very long it could go off-screen, you can copy/save it to view the whole text."
+      , bg="LightSteelBlue4", fg="white",
+      font="none 8").grid(
+    row=13, column=0, sticky=W)
 
 """copy output to clipboard button"""
 copy_btn = Button(window, width=11, height=2, bg="deep sky blue", command=lambda: pyperclip.copy(output.cget('text')
                                                                                                  .replace("\n", "", 1)),
                   text="Copy Output")
-copy_btn.grid(row=13, column=0, sticky=W)
+copy_btn.grid(row=14, column=0, sticky=W)
 
 """save output to file button"""
 s_btn = Button(window, width=11, height=2, bg="DeepSkyBlue2", command=save_dialog, text="Save To File")
-s_btn.grid(row=14, column=0, sticky=W)
+s_btn.grid(row=15, column=0, sticky=W)
 
 """exit button"""
-btn = Button(window, width=11, height=2, bg="blue", command=window.destroy, text="Exit")
-btn.grid(row=15, column=0, sticky=W)
+btn = Button(window, width=11, height=2, bg="dark orange", command=window.destroy, text="Exit")
+btn.grid(row=16, column=0, sticky=W)
 
 window.mainloop()

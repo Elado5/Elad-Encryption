@@ -19,15 +19,15 @@ def enc(text, key):
         if key % counter == 0:
             lst += str(key * (counter + key))
     res = ''.join(lst)[::-1]
-    res = res.replace("\n", "r6r5r6r5###2345)(05gd")
-    return
+    res = res.replace("\n", "r6r5r6r5###2345)(05gd%^&bM-=4")
+    return res
 
 
 """Reverses the encryption process"""
 
 
 def dec(text, key):
-    el = str(text).replace("r6r5r6r5###2345)(05gd", "\n")
+    el = str(text).replace("r6r5r6r5###2345)(05gd%^&bM-=4", "\n")
     el = el[::-1]
     e = list(el)
     counter = 0
@@ -43,12 +43,14 @@ def dec(text, key):
 """forced decryption - takes a text hint (so it knows what to look for in general) and then a key search range.
    A 'for' loop starts and runs the decryption algorithm for *search range* times, if a result that contains the hint
    text exists - it returns the result and the key that worked and then the loop ends.
+   New lines will be replaced with a long random text (very close to 0 that this exact text will exist in a text file
+   the user wants to decrypt so there shouldn't be a problem with that.
    If it doesn't find a string that contains the hint text, it returns 'no plausible result found'"""
 
 
 def force_dec(text, hint, search_range):
     for num in range(search_range):
-        el = str(text).replace("r6r5r6r5###2345)(05gd", "\n")
+        el = str(text).replace("r6r5r6r5###2345)(05gd%^&bM-=4", "\n")
         el = el[::-1]
         e = list(el)
 
@@ -65,13 +67,13 @@ def force_dec(text, hint, search_range):
 
 
 txt = "elado123@gmail.com\n555\nroberto"
-#print(txt)
+# print(txt)
 
 output = enc(txt, 51030)
 print(output)
 
-#output2 = dec(output, 51030)
-#print(output2)
+output2 = dec(output, 51030)
+print(output2)
 
-#output3 = force_dec(output, "gmail.com", 55001)
-#print(output3)
+output3 = force_dec(output, "gmail.com", 55001)
+print(output3)
