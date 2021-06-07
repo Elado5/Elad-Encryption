@@ -27,11 +27,10 @@ def enc(text, key):
 
 
 def dec(text, key):
-    el = text.replace( "r6r5r6r5###2345)(05gd", "\n")
-    e = list(text[::-1])
+    el = str(text).replace("r6r5r6r5###2345)(05gd", "\n")
     el = el[::-1]
+    e = list(el)
     counter = 0
-    el = el.replace("\n", "r6r5r6r5###2345)(05gd")
 
     for x in e:
         counter += 1
@@ -49,9 +48,10 @@ def dec(text, key):
 
 def force_dec(text, hint, search_range):
     for num in range(search_range):
-        e = list(text[::-1])
-        el = text.replace("r6r5r6r5###2345)(05gd", "\n")
+        el = str(text).replace("r6r5r6r5###2345)(05gd", "\n")
         el = el[::-1]
+        e = list(el)
+
         counter = 0
         for x in e:
             counter += 1
@@ -65,13 +65,13 @@ def force_dec(text, hint, search_range):
 
 
 txt = "elado123@gmail.com\n555\nroberto"
-print(txt)
+#print(txt)
 
 output = enc(txt, 51030)
 print(output)
 
-output2 = dec(output, 51030)
-print(output2)
+#output2 = dec(output, 51030)
+#print(output2)
 
-output3 = force_dec(output, "gmail.com", 55001)
-print(output3)
+#output3 = force_dec(output, "gmail.com", 55001)
+#print(output3)
