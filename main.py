@@ -119,10 +119,16 @@ def force_decrypt():
         is_dig = False
 
     if is_dig:
+
+        if int(search_range.get("1.0", "end")) > 1500000:
+            output.config(
+                text="That search range could be harmful to your PC, try below 1500000")
+            return
+
         output.config(
             text=(force_dec(textbox.get("1.0", "end"), str(hint.get("1.0", "end")).rstrip("\n"), int(search_range.get
                                                                                                      ("1.0", "end")))))
-        #print(str(hint.get("1.0", "end")))
+        # print(str(hint.get("1.0", "end")))
         return
     else:
         output.config(
@@ -226,8 +232,14 @@ def save_dialog_force_de():
         is_dig = False
 
     if is_dig:
+
+        if int(search_range.get("1.0", "end")) > 1500000:
+            output.config(
+                text="That search range could be harmful to your PC, try below 1500000")
+            return
+
         text_var = (force_dec(textbox.get("1.0", "end"), str(hint.get("1.0", "end")).rstrip("\n"), int(search_range.get
-                                                                                                   ("1.0", "end"))))
+                                                                                                       ("1.0", "end"))))
 
         if text_var == "No plausible result found":
             output.config(
@@ -264,7 +276,7 @@ def save_dialog_de():
 
     if is_dig:
         text_var = (dec(textbox.get("1.0", "end"), int(key.get("1.0", "end"))
-                        ))
+                        )).replace("\n", "", 1)
 
         s_file = filedialog.asksaveasfile(mode='w', defaultextension=".txt")
         if s_file is None:
@@ -334,10 +346,11 @@ copy_btn = Button(window, width=21, height=2, bg="SteelBlue1",
                        "ard")
 copy_btn.grid(row=6, column=1, sticky=W)
 
-"""calculation button"""
+"""encryption button"""
 btn = Button(window, width=11, height=2, bg="SteelBlue1", command=encrypt, text="Encrypt")
 btn.grid(row=5, column=0, sticky=W)
 
+"""decryption button"""
 btn2 = Button(window, width=11, height=2, bg="SteelBlue2", command=decrypt, text="Decrypt")
 btn2.grid(row=6, column=0, sticky=W)
 
@@ -355,7 +368,7 @@ hint.grid(row=8, column=0, sticky=W)
 Label(window, text="Enter a the range of keys you want the forced decryption to look for (for example: 5000 is "
                    "0-4999)\n"
                    "If the key result is 0 it means it was semi-decrypted.\n"
-                   "Keep in mind a key too high can affect your pc:", bg="LightSteelBlue4", fg="white",
+                   "Keep in mind a key too high (i.e. 200000+) could affect your pc, max key is 1500000:", bg="LightSteelBlue4", fg="white",
       font="none 9 bold").grid(
     row=9, column=0, sticky=W)
 
@@ -369,7 +382,7 @@ force_btn = Button(window, width=11, height=2, bg="SteelBlue3", command=force_de
 force_btn.grid(row=11, column=0, sticky=W)
 
 """the result label"""
-output = Label(window, text="", width=100, height=8, bg="mint cream")
+output = Label(window, text="", width=100, height=8, bg="azure2")
 output.grid(row=12, column=0, sticky=W)
 
 """search range explanation"""
