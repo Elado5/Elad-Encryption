@@ -20,6 +20,7 @@ def enc(text, key):
             lst += str(key * (counter + key))
     res = ''.join(lst)[::-1]
     res = res.replace("\n", "r6r5r6r5###2345)(05gd%^&bM-=4")
+    res = res.replace(" ", "e/$#%gnאwikל2is34")
     return res
 
 
@@ -28,6 +29,7 @@ def enc(text, key):
 
 def dec(text, key):
     el = str(text).replace("r6r5r6r5###2345)(05gd%^&bM-=4", "\n")
+    el = el.replace( "e/$#%gnאwikל2is34"," ")
     el = el[::-1]
     e = list(el)
     counter = 0
@@ -49,6 +51,7 @@ def dec(text, key):
 def force_dec(text, hint, search_range):
     for num in range(search_range):
         el = str(text).replace("r6r5r6r5###2345)(05gd%^&bM-=4", "\n")
+        el = el.replace("e/$#%gnאwikל2is34", " ")
         el = el[::-1]
         e = list(el)
 
@@ -300,7 +303,11 @@ window.title("Elad - Encryption Project")
 window.wm_geometry("900x700")  # app size
 window.resizable(0, 0)
 
+"""saving image files in variables to use later"""
 photo = PhotoImage(file="BGTK.png")
+import_button_photo = PhotoImage(file="button_import-file.png")
+exit_button = PhotoImage(file="button_exit.png")
+
 background_label = Label(window, image=photo)
 background_label.place(x=0, y=0, relwidth=1, relheight=1)
 Label(window, text="Enter the text you want to encrypt/decrypt:", bg="LightSteelBlue4", fg="white",
@@ -312,8 +319,9 @@ textbox = Text(window, width=40, height=3, bg="LightSteelBlue1")
 textbox.grid(row=2, column=0, sticky=W)
 
 """import file button"""
-f_btn = Button(window, width=11, height=2, bg="turquoise2", command=import_dialog, text="Import file")
-f_btn.grid(row=2, column=1, sticky=W)
+import_btn = Button(window, width="144", height="45", bg="turquoise2", command=import_dialog,
+               image=import_button_photo)
+import_btn.grid(row=2, column=1, sticky=W)
 
 """encrypt to file button"""
 en_btn = Button(window, width=20, height=2, bg="DeepSkyBlue2", command=save_dialog_en, text="Encrypt To File")
@@ -402,7 +410,7 @@ s_btn = Button(window, width=11, height=2, bg="DeepSkyBlue2", command=save_dialo
 s_btn.grid(row=15, column=0, sticky=W)
 
 """exit button"""
-btn = Button(window, width=11, height=2, bg="dark orange", command=window.destroy, text="Exit")
+btn = Button(window, width="85", height="40", bg="dark orange", image= exit_button, command=window.destroy)
 btn.grid(row=16, column=0, sticky=W)
 
 window.mainloop()
